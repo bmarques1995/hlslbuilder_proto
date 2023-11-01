@@ -8,9 +8,9 @@ namespace HLSLBuilder
 	class HLSLB_API Starter
 	{
 	public:
-		/*!
-		* ... Hello Doxygen ...
-		*/
+		/**
+		 * ... Hello Doxygen ...
+		 */
 		static void PrintHello();
 	};
 }

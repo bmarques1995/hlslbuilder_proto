@@ -1,3 +1,3 @@
-# SMake
+# HLSL Builder
 
-SMake is a project that ports the CMake idea to GLSL and HLSL, and futurely MSL, creating a solution that enables build a set of the selected shader language sources.
+This is a project that uses a solution to compile a set of HLSL files to cso or spv.
