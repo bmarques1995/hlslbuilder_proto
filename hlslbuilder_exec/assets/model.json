@@ -1,0 +1,9 @@
+{
+  "Sources": [],
+  "CompileDefinitions": [],
+  "IncludeDirectories": [],
+  "Headers": [],
+  "HLSLVersion": "6.5",
+  "VertexEntry": "vs_main",
+  "PixelEntry": "ps_main"
+}

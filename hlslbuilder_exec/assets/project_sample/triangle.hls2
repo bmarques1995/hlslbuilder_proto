@@ -1,0 +1,10 @@
+{
+  "Sources": [
+    "./test.hlsl",
+    "./texture.hlsl"
+  ],
+  "VulkanVersion" : "1.3",
+  "HLSLVersion":  "6.0",
+  "VertexEntry": "vs_main",
+  "PixelEntry":  "ps_main"
+}
