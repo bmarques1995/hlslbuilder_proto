@@ -1,9 +1,15 @@
 #include <iostream>
-#include "starter.hh"
+#include "HLSLBuilder.hh"
 
 int main(int argc, char** argv)
 {
-	HLSLBuilder::Starter::PrintHello();
-	std::cout << "Hello SMake" << "\n";
+	HLSLBuilder::Console::Init();
+	//skip the self run arg
+	for (size_t i = 1; i < argc; i++)
+	{
+		HLSLBuilder::ArgTree::PushArg(argv[i]);
+	}
+	HLSLBuilder::ArgTree::ResolveArgs();
+	HLSLBuilder::Console::Log("HLSL Builder Version {0}", HLSLBuilder::HLSLBuilderVersion);
 	return 0;
 }
