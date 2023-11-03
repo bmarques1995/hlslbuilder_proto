@@ -4,6 +4,9 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <utility>
+#include <queue>
+#include <regex>
 
 namespace HLSLBuilder
 {
@@ -12,7 +15,8 @@ namespace HLSLBuilder
 		BUILD = 0,
 		API,
 		CONFIG,
-		HELP
+		HELP,
+		VERSION
 	};
 
 	class HLSLB_API ArgTree
@@ -25,7 +29,7 @@ namespace HLSLBuilder
 		 */
 
 		/* now is time to test the [Class linkage](@ref ProjectReader) */
-		static void PushArg(std::string_view arg);
+		static void PushRawArg(std::string_view arg);
 
 		/**
 		 * Resolve args will reallocate and validate all pushed args, in category and value
@@ -39,8 +43,13 @@ namespace HLSLBuilder
 		static std::vector<std::string_view> s_StrArgs;
 
 		static void ResolveRegex(std::string_view arg);
+		static void PushSingleArgTreated(std::string_view arg);
+		static void PushDoubleArgTreated(std::sregex_token_iterator* arg);
 
 		static const std::unordered_map<std::string_view, ArgCategory> s_ArgMapper;
 		static std::unordered_map<ArgCategory, std::string_view> s_ArgValues;
+
+		static std::queue<ArgCategory> s_SingleArgTree;
+		static std::queue<std::pair<ArgCategory, std::string>> s_DoubleArgTree;
 	};
 }

@@ -2,7 +2,7 @@
 
 ## Command Line Args
 
-All arguments must follow this structure `arg:value`
+All arguments must follow these structure: `arg` or `arg:value`
 
 This is the list of accepted arguments
 
@@ -10,3 +10,4 @@ This is the list of accepted arguments
 * `-c/--config`: specifies if the build is in debug or release mode
 * `-api/--target-api`: specifies the target renderer API: can be spv(SPIRV) or cso(Compiled Shader Object, for Direct3D)
 * `-v/--version`: specifies HLSL Builder Version
+* `-h/--help`: displays help informations
