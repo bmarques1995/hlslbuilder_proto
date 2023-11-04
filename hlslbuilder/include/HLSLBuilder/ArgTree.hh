@@ -1,12 +1,13 @@
 #pragma once
 
 #include "HLSLBuilderAPI.hh"
-#include <string>
+#include <sstream>
 #include <vector>
 #include <unordered_map>
 #include <utility>
 #include <queue>
 #include <regex>
+#include <exception>
 
 namespace HLSLBuilder
 {
@@ -17,6 +18,15 @@ namespace HLSLBuilder
 		CONFIG,
 		HELP,
 		VERSION
+	};
+
+	class ArgException : public std::exception
+	{
+	public:
+		ArgException(std::string exc);
+		char const* what() const override;
+	private:
+		std::string m_Exception;
 	};
 
 	class HLSLB_API ArgTree
@@ -47,6 +57,8 @@ namespace HLSLBuilder
 		static void ResolveRegex(std::string_view arg);
 		static void PushInfoArgTreated(std::string_view arg);
 		static void PushControlArgTreated(std::sregex_token_iterator* arg);
+		static std::string BuildAssignmentErrorMessage(std::string_view arg, bool controlArg);
+		static std::string BuildArgumentErrorMessage(std::string_view arg);
 
 		static const std::unordered_map<std::string_view, ArgCategory> s_ArgMapper;
 		static std::unordered_map<ArgCategory, std::string_view> s_ArgValues;

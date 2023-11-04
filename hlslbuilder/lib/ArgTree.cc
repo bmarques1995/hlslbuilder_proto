@@ -60,8 +60,7 @@ void HLSLBuilder::ArgTree::ResolveRegex(std::string_view arg)
 
 	if (numOfMatches > 1)
 	{
-		Console::Error("Invalid argument");
-		return;
+		throw ArgException("Invalid Argument Assigment Evaluation, neither argument accept two values");
 	}
 	
 	if (numOfMatches == 0)
@@ -78,12 +77,12 @@ void HLSLBuilder::ArgTree::PushInfoArgTreated(std::string_view arg)
 	{
 		auto list_it = std::find(s_InfoArgs.begin(), s_InfoArgs.end(), it->second);
 		if (list_it == s_InfoArgs.end())
-			Console::Error("Argument: {0} is not an info argument", arg);
+			throw ArgException(BuildAssignmentErrorMessage(arg, true));
 		else
 			s_InfoArgTree.push(it->second);
 	}
 	else
-		Console::Error("Argument: {0} not found", arg);
+		throw ArgException(BuildArgumentErrorMessage(arg));
 }
 
 void HLSLBuilder::ArgTree::PushControlArgTreated(std::sregex_token_iterator* arg)
@@ -103,11 +102,42 @@ void HLSLBuilder::ArgTree::PushControlArgTreated(std::sregex_token_iterator* arg
 	{
 		auto list_it = std::find(s_ControlArgs.begin(), s_ControlArgs.end(), it->second);
 		if(list_it == s_ControlArgs.end())
-			Console::Error("Argument: {0} is not a control argument", args[0]);
+			throw ArgException(BuildAssignmentErrorMessage(args[0], false));
 		else
 			s_ControlArgTree.push(std::make_pair(it->second, args[1]));
 	}
 	else
-		Console::Error("Argument: {0} not found", args[0]);
+		throw ArgException(BuildArgumentErrorMessage(args[0]));
 	delete[] args;
+}
+
+std::string HLSLBuilder::ArgTree::BuildAssignmentErrorMessage(std::string_view arg, bool controlArg)
+{
+	std::string message;
+	std::stringstream messageBuffer;
+	messageBuffer << "Invalid Argument Assigment\nArgument: " << arg;
+	if (controlArg)
+		messageBuffer << " is a control arg, so must be assigned";
+	else
+		messageBuffer << " isn't a control arg, so is unassigned";
+	message = messageBuffer.str();
+	return message;
+}
+
+std::string HLSLBuilder::ArgTree::BuildArgumentErrorMessage(std::string_view arg)
+{
+	std::string message;
+	std::stringstream messageBuffer;
+	messageBuffer << "Argument: " << arg << " not found";
+	return message;
+}
+
+HLSLBuilder::ArgException::ArgException(std::string exc) :
+	m_Exception(exc)
+{
+}
+
+char const* HLSLBuilder::ArgException::what() const
+{
+	return m_Exception.c_str();
 }

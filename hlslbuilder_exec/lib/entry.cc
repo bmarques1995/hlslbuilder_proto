@@ -10,7 +10,17 @@ int main(int argc, char** argv)
 	{
 		HLSLBuilder::ArgTree::PushRawArg(argv[i]);
 	}
-	HLSLBuilder::ArgTree::ResolveArgs();
+	try
+	{
+		HLSLBuilder::ArgTree::ResolveArgs();
+	}
+	catch(HLSLBuilder::ArgException e)
+	{
+		HLSLBuilder::Console::Critical("{0}\n",e.what());
+		HLSLBuilderCLI::Displayer::Resolve(HLSLBuilder::ArgCategory::HELP);
+		exit(2);
+	}
+
 	auto singleArgs = HLSLBuilder::ArgTree::GetInfoArgs();
 	auto valuedArgs = HLSLBuilder::ArgTree::GetControlArgs();
 	if ((valuedArgs.size() > 0) && (singleArgs.size() > 0))
