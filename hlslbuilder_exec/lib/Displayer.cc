@@ -5,10 +5,12 @@ const std::unordered_map<HLSLBuilder::ArgCategory, std::function<void()>> HLSLBu
 	{
         HLSLBuilder::ArgCategory::HELP, []()
 	    {
-		    HLSLBuilder::Console::Log("usage: HLSLVersion [-v | --version] [-h | --help]");
+		    HLSLBuilder::Console::Log("HLSLBuilder commands:");
+		    HLSLBuilder::Console::Log("usage: HLSLBuilder version [-v | --version] [-h | --help]");
 		    HLSLBuilder::Console::Log("[-b/--build]:<build_file_path>(must match a .hls2)");
 		    HLSLBuilder::Console::Log("[-c/--config]:<build_mode>(Debug/Release: can be either upper or lower case)");
 		    HLSLBuilder::Console::Log("[-api/--target-api]:<binary_output>(SPV/CSO: can be either upper or lower case)");
+		    HLSLBuilder::Console::Log("[-h/--help] and [-v/--version], if used, can't receive another arg,\nif used with more args, and exception will be thrown, after detected the second arg");
 	    }
 	},
 	{
