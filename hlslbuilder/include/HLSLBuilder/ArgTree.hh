@@ -39,19 +39,22 @@ namespace HLSLBuilder
 		 /* now is time to test the [Class linkage](@ref ProjectReader) */
 		static void ResolveArgs();
 
-		static std::queue<ArgCategory> GetSingleArgs();
-		static std::queue<std::pair<ArgCategory, std::string>> GetValuedArgs();
+		static std::queue<ArgCategory> GetInfoArgs();
+		static std::queue<std::pair<ArgCategory, std::string>> GetControlArgs();
 	private:
 		static std::vector<std::string_view> s_StrArgs;
 
 		static void ResolveRegex(std::string_view arg);
-		static void PushSingleArgTreated(std::string_view arg);
-		static void PushValuedArgTreated(std::sregex_token_iterator* arg);
+		static void PushInfoArgTreated(std::string_view arg);
+		static void PushControlArgTreated(std::sregex_token_iterator* arg);
 
 		static const std::unordered_map<std::string_view, ArgCategory> s_ArgMapper;
 		static std::unordered_map<ArgCategory, std::string_view> s_ArgValues;
 
-		static std::queue<ArgCategory> s_SingleArgTree;
-		static std::queue<std::pair<ArgCategory, std::string>> s_ValuedArgTree;
+		static const std::list<ArgCategory> s_InfoArgs;
+		static const std::list<ArgCategory> s_ControlArgs;
+
+		static std::queue<ArgCategory> s_InfoArgTree;
+		static std::queue<std::pair<ArgCategory, std::string>> s_ControlArgTree;
 	};
 }

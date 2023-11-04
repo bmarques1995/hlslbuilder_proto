@@ -18,8 +18,11 @@ const std::unordered_map<std::string_view, HLSLBuilder::ArgCategory> HLSLBuilder
 };
 std::unordered_map<HLSLBuilder::ArgCategory, std::string_view> HLSLBuilder::ArgTree::s_ArgValues;
 
-std::queue<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_SingleArgTree;
-std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTree::s_ValuedArgTree;
+std::queue<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_InfoArgTree;
+std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTree::s_ControlArgTree;
+
+const std::list<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_InfoArgs = std::list<HLSLBuilder::ArgCategory>({ HLSLBuilder::ArgCategory::HELP, HLSLBuilder::ArgCategory::VERSION });
+const std::list<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_ControlArgs = std::list<HLSLBuilder::ArgCategory>({ HLSLBuilder::ArgCategory::API, HLSLBuilder::ArgCategory::BUILD, HLSLBuilder::ArgCategory::CONFIG });
 
 void HLSLBuilder::ArgTree::PushRawArg(std::string_view arg)
 {
@@ -34,23 +37,21 @@ void HLSLBuilder::ArgTree::ResolveArgs()
 	}
 }
 
-std::queue<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::GetSingleArgs()
+std::queue<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::GetInfoArgs()
 {
-	return s_SingleArgTree;
+	return s_InfoArgTree;
 }
 
-std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTree::GetValuedArgs()
+std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTree::GetControlArgs()
 {
-	return s_ValuedArgTree;
+	return s_ControlArgTree;
 }
 
 void HLSLBuilder::ArgTree::ResolveRegex(std::string_view arg)
 {
 	std::string text = arg.data();
 
-	// Regular expression pattern to split the text using ':'
 	std::regex pattern(":");
-
 
 	std::sregex_token_iterator matcher(text.begin(), text.end(), pattern, -1);
 	std::sregex_token_iterator end;
@@ -64,22 +65,28 @@ void HLSLBuilder::ArgTree::ResolveRegex(std::string_view arg)
 	}
 	
 	if (numOfMatches == 0)
-		PushSingleArgTreated(text);
+		PushInfoArgTreated(text);
 	else
-		PushValuedArgTreated(&matcher);
+		PushControlArgTreated(&matcher);
 
 }
 
-void HLSLBuilder::ArgTree::PushSingleArgTreated(std::string_view arg)
+void HLSLBuilder::ArgTree::PushInfoArgTreated(std::string_view arg)
 {
 	auto it = s_ArgMapper.find(arg);
 	if (it != s_ArgMapper.end())
-		s_SingleArgTree.push(it->second);
+	{
+		auto list_it = std::find(s_InfoArgs.begin(), s_InfoArgs.end(), it->second);
+		if (list_it == s_InfoArgs.end())
+			Console::Error("Argument: {0} is not an info argument", arg);
+		else
+			s_InfoArgTree.push(it->second);
+	}
 	else
 		Console::Error("Argument: {0} not found", arg);
 }
 
-void HLSLBuilder::ArgTree::PushValuedArgTreated(std::sregex_token_iterator* arg)
+void HLSLBuilder::ArgTree::PushControlArgTreated(std::sregex_token_iterator* arg)
 {
 	std::sregex_token_iterator end;
 	size_t elementsCount = (*arg)->length();
@@ -93,7 +100,13 @@ void HLSLBuilder::ArgTree::PushValuedArgTreated(std::sregex_token_iterator* arg)
 	}
 	auto it = s_ArgMapper.find(args[0]);
 	if (it != s_ArgMapper.end())
-		s_ValuedArgTree.push(std::make_pair(it->second, args[1]));
+	{
+		auto list_it = std::find(s_ControlArgs.begin(), s_ControlArgs.end(), it->second);
+		if(list_it == s_ControlArgs.end())
+			Console::Error("Argument: {0} is not a control argument", args[0]);
+		else
+			s_ControlArgTree.push(std::make_pair(it->second, args[1]));
+	}
 	else
 		Console::Error("Argument: {0} not found", args[0]);
 	delete[] args;

@@ -11,7 +11,19 @@ int main(int argc, char** argv)
 		HLSLBuilder::ArgTree::PushRawArg(argv[i]);
 	}
 	HLSLBuilder::ArgTree::ResolveArgs();
-	auto singleArgs = HLSLBuilder::ArgTree::GetSingleArgs();
+	auto singleArgs = HLSLBuilder::ArgTree::GetInfoArgs();
+	auto valuedArgs = HLSLBuilder::ArgTree::GetControlArgs();
+	if ((valuedArgs.size() > 0) && (singleArgs.size() > 0))
+	{
+		HLSLBuilderCLI::Displayer::InfoControlError();
+		exit(1);
+	}
+	if ((singleArgs.size() > 1))
+	{
+		HLSLBuilderCLI::Displayer::MultipleInfoError();
+		exit(1);
+	}
+	
 	while (!singleArgs.empty())
 	{
 		HLSLBuilderCLI::Displayer::Resolve(singleArgs.front());

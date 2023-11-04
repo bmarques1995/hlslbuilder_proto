@@ -10,6 +10,8 @@ namespace HLSLBuilderCLI
 	{
 	public:
 		static void Resolve(HLSLBuilder::ArgCategory category);
+		static void MultipleInfoError();
+		static void InfoControlError();
 	private:
 		static const std::unordered_map<HLSLBuilder::ArgCategory, std::function<void()>> s_ArgResolvers;
 	};

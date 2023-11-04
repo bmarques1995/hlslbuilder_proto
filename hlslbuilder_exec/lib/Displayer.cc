@@ -27,3 +27,19 @@ void HLSLBuilderCLI::Displayer::Resolve(HLSLBuilder::ArgCategory category)
     if (it != s_ArgResolvers.end())
         it->second();
 }
+
+void HLSLBuilderCLI::Displayer::MultipleInfoError()
+{
+	HLSLBuilder::Console::Critical("There is more than one info arg passed\n");
+	auto it = s_ArgResolvers.find(HLSLBuilder::ArgCategory::HELP);
+	if (it != s_ArgResolvers.end())
+		it->second();
+}
+
+void HLSLBuilderCLI::Displayer::InfoControlError()
+{
+	HLSLBuilder::Console::Critical("Info args passed at same time of control args\n");
+	auto it = s_ArgResolvers.find(HLSLBuilder::ArgCategory::HELP);
+	if (it != s_ArgResolvers.end())
+		it->second();
+}
