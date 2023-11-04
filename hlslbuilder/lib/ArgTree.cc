@@ -19,7 +19,7 @@ const std::unordered_map<std::string_view, HLSLBuilder::ArgCategory> HLSLBuilder
 std::unordered_map<HLSLBuilder::ArgCategory, std::string_view> HLSLBuilder::ArgTree::s_ArgValues;
 
 std::queue<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_SingleArgTree;
-std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTree::s_DoubleArgTree;
+std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTree::s_ValuedArgTree;
 
 void HLSLBuilder::ArgTree::PushRawArg(std::string_view arg)
 {
@@ -32,6 +32,16 @@ void HLSLBuilder::ArgTree::ResolveArgs()
 	{
 		ResolveRegex(i);
 	}
+}
+
+std::queue<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::GetSingleArgs()
+{
+	return s_SingleArgTree;
+}
+
+std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTree::GetValuedArgs()
+{
+	return s_ValuedArgTree;
 }
 
 void HLSLBuilder::ArgTree::ResolveRegex(std::string_view arg)
@@ -56,7 +66,7 @@ void HLSLBuilder::ArgTree::ResolveRegex(std::string_view arg)
 	if (numOfMatches == 0)
 		PushSingleArgTreated(text);
 	else
-		PushDoubleArgTreated(&matcher);
+		PushValuedArgTreated(&matcher);
 
 }
 
@@ -69,7 +79,7 @@ void HLSLBuilder::ArgTree::PushSingleArgTreated(std::string_view arg)
 		Console::Error("Argument: {0} not found", arg);
 }
 
-void HLSLBuilder::ArgTree::PushDoubleArgTreated(std::sregex_token_iterator* arg)
+void HLSLBuilder::ArgTree::PushValuedArgTreated(std::sregex_token_iterator* arg)
 {
 	std::sregex_token_iterator end;
 	size_t elementsCount = (*arg)->length();
@@ -83,7 +93,7 @@ void HLSLBuilder::ArgTree::PushDoubleArgTreated(std::sregex_token_iterator* arg)
 	}
 	auto it = s_ArgMapper.find(args[0]);
 	if (it != s_ArgMapper.end())
-		s_DoubleArgTree.push(std::make_pair(it->second, args[1]));
+		s_ValuedArgTree.push(std::make_pair(it->second, args[1]));
 	else
 		Console::Error("Argument: {0} not found", args[0]);
 	delete[] args;

@@ -8,7 +8,7 @@ file(GLOB_RECURSE SM_EXEC_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "./lib/*.cc"
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_PREFIX_PATH})
 
 add_executable(${TARGET_NAME} ${SM_EXEC_HDRS} ${SM_EXEC_SRCS})
-target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_PREFIX_PATH}/include" "${PROJECT_SOURCE_DIR}/hlslbuilder/include/HLSLBuilder")
+target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include" "${CMAKE_PREFIX_PATH}/include" "${PROJECT_SOURCE_DIR}/hlslbuilder/include/HLSLBuilder")
 target_link_directories(${TARGET_NAME} PUBLIC "${CMAKE_PREFIX_PATH}/lib")
 target_link_libraries(${TARGET_NAME} PRIVATE ${CMAKE_PROJECT_NAME}_static)
 

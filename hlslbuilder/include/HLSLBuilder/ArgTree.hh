@@ -32,24 +32,26 @@ namespace HLSLBuilder
 		static void PushRawArg(std::string_view arg);
 
 		/**
-		 * Resolve args will reallocate and validate all pushed args, in category and value
-		 * the complete list of avaliable arguments can be found in [Properties](@ref docs/properties.md).
+		 * Resolve args will reallocate and validate all pushed args, in category and value.
 		 *
 		 */
 
 		 /* now is time to test the [Class linkage](@ref ProjectReader) */
 		static void ResolveArgs();
+
+		static std::queue<ArgCategory> GetSingleArgs();
+		static std::queue<std::pair<ArgCategory, std::string>> GetValuedArgs();
 	private:
 		static std::vector<std::string_view> s_StrArgs;
 
 		static void ResolveRegex(std::string_view arg);
 		static void PushSingleArgTreated(std::string_view arg);
-		static void PushDoubleArgTreated(std::sregex_token_iterator* arg);
+		static void PushValuedArgTreated(std::sregex_token_iterator* arg);
 
 		static const std::unordered_map<std::string_view, ArgCategory> s_ArgMapper;
 		static std::unordered_map<ArgCategory, std::string_view> s_ArgValues;
 
 		static std::queue<ArgCategory> s_SingleArgTree;
-		static std::queue<std::pair<ArgCategory, std::string>> s_DoubleArgTree;
+		static std::queue<std::pair<ArgCategory, std::string>> s_ValuedArgTree;
 	};
 }

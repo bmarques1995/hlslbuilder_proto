@@ -14,7 +14,7 @@ void HLSLBuilder::Console::Init()
 
 	clientLogSinks.push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
 
-	clientLogSinks[0]->set_pattern("%^[%T][%l] %n: %v%$");
+	clientLogSinks[0]->set_pattern("%^%v%$");
 	client_dup_filter->add_sink(clientLogSinks[0]);
 
 	s_Logger.reset(new spdlog::logger("HLSLBuilder", client_dup_filter));

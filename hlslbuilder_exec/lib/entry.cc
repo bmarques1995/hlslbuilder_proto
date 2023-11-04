@@ -1,16 +1,21 @@
 #include <iostream>
-#include "HLSLBuilder.hh"
+#include <HLSLBuilder.hh>
 #include <filesystem>
+#include "Displayer.hh"
 
 int main(int argc, char** argv)
 {
 	HLSLBuilder::Console::Init();
-	//skip the self run arg
 	for (size_t i = 1; i < argc; i++)
 	{
 		HLSLBuilder::ArgTree::PushRawArg(argv[i]);
 	}
 	HLSLBuilder::ArgTree::ResolveArgs();
-	HLSLBuilder::Console::Log("HLSL Builder Version {0}", HLSLBuilder::HLSLBuilderVersion);
+	auto singleArgs = HLSLBuilder::ArgTree::GetSingleArgs();
+	while (!singleArgs.empty())
+	{
+		HLSLBuilderCLI::Displayer::Resolve(singleArgs.front());
+		singleArgs.pop();
+	}
 	return 0;
 }
