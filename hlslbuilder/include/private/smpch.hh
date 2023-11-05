@@ -1,5 +1,4 @@
-#ifndef SMPCH_HH
-#define SMPCH_HH
+#pragma once
 
 #include <fstream>
 #include <sstream>
@@ -9,5 +8,4 @@
 #include <utility>
 #include <queue>
 #include <regex>
-
-#endif // !1
+#include <exception>

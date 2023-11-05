@@ -1,6 +1,6 @@
 #include "ArgTree.hh"
 #include "Console.hh"
-
+#include "Utils/StringHandler.hh"
 
 std::vector<std::string_view> HLSLBuilder::ArgTree::s_StrArgs = std::vector<std::string_view>();
 const std::unordered_map<std::string_view, HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_ArgMapper =
@@ -18,11 +18,28 @@ const std::unordered_map<std::string_view, HLSLBuilder::ArgCategory> HLSLBuilder
 };
 std::unordered_map<HLSLBuilder::ArgCategory, std::string_view> HLSLBuilder::ArgTree::s_ArgValues;
 
+const std::unordered_map<std::string_view, HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_ValidAssignments =
+{
+	{"cso", HLSLBuilder::ArgCategory::API},
+	{"spv", HLSLBuilder::ArgCategory::API},
+	{"debug", HLSLBuilder::ArgCategory::CONFIG},
+	{"release", HLSLBuilder::ArgCategory::CONFIG}
+};
+
 std::queue<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_InfoArgTree;
 std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTree::s_ControlArgTree;
 
-const std::list<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_InfoArgs = std::list<HLSLBuilder::ArgCategory>({ HLSLBuilder::ArgCategory::HELP, HLSLBuilder::ArgCategory::VERSION });
-const std::list<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_ControlArgs = std::list<HLSLBuilder::ArgCategory>({ HLSLBuilder::ArgCategory::API, HLSLBuilder::ArgCategory::BUILD, HLSLBuilder::ArgCategory::CONFIG });
+const std::list<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_InfoArgs = std::list<HLSLBuilder::ArgCategory>(
+	{
+		HLSLBuilder::ArgCategory::HELP,
+		HLSLBuilder::ArgCategory::VERSION
+	});
+const std::list<HLSLBuilder::ArgCategory> HLSLBuilder::ArgTree::s_ControlArgs = std::list<HLSLBuilder::ArgCategory>(
+	{
+		HLSLBuilder::ArgCategory::API,
+		HLSLBuilder::ArgCategory::BUILD,
+		HLSLBuilder::ArgCategory::CONFIG
+	});
 
 void HLSLBuilder::ArgTree::PushRawArg(std::string_view arg)
 {
@@ -33,7 +50,7 @@ void HLSLBuilder::ArgTree::ResolveArgs()
 {
 	for (auto& i : s_StrArgs)
 	{
-		ResolveRegex(i);
+		ClassifyAndEvaluateArgs(i);
 	}
 }
 
@@ -47,7 +64,7 @@ std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>> HLSLBuilder::ArgTre
 	return s_ControlArgTree;
 }
 
-void HLSLBuilder::ArgTree::ResolveRegex(std::string_view arg)
+void HLSLBuilder::ArgTree::ClassifyAndEvaluateArgs(std::string_view arg)
 {
 	std::string text = arg.data();
 
@@ -56,18 +73,27 @@ void HLSLBuilder::ArgTree::ResolveRegex(std::string_view arg)
 	std::sregex_token_iterator matcher(text.begin(), text.end(), pattern, -1);
 	std::sregex_token_iterator end;
 
-	size_t numOfMatches = std::distance(matcher,end) - 1;
+	size_t numOfMatches = std::distance(matcher, end) - 1;
 
 	if (numOfMatches > 1)
 	{
 		throw ArgException("Invalid Argument Assigment Evaluation, neither argument accept two values");
 	}
-	
+
 	if (numOfMatches == 0)
 		PushInfoArgTreated(text);
 	else
 		PushControlArgTreated(&matcher);
 
+}
+
+void HLSLBuilder::ArgTree::ValidateControlAssignment(std::string_view value, HLSLBuilder::ArgCategory category)
+{
+	if (category == ArgCategory::BUILD)
+		return;
+	auto list_it = s_ValidAssignments.find(value);
+	if ((list_it == s_ValidAssignments.end()) || (list_it->second != category))
+		throw BadEvaluationException(category, value.data());
 }
 
 void HLSLBuilder::ArgTree::PushInfoArgTreated(std::string_view arg)
@@ -101,10 +127,14 @@ void HLSLBuilder::ArgTree::PushControlArgTreated(std::sregex_token_iterator* arg
 	if (it != s_ArgMapper.end())
 	{
 		auto list_it = std::find(s_ControlArgs.begin(), s_ControlArgs.end(), it->second);
-		if(list_it == s_ControlArgs.end())
+		if (list_it == s_ControlArgs.end())
 			throw ArgException(BuildAssignmentErrorMessage(args[0], false));
 		else
+		{
+			StringHandler::ToLower(&args[1]);
+			ValidateControlAssignment(args[1], it->second);
 			s_ControlArgTree.push(std::make_pair(it->second, args[1]));
+		}
 	}
 	else
 		throw ArgException(BuildArgumentErrorMessage(args[0]));
@@ -140,4 +170,34 @@ HLSLBuilder::ArgException::ArgException(std::string exc) :
 char const* HLSLBuilder::ArgException::what() const
 {
 	return m_Exception.c_str();
+}
+
+HLSLBuilder::BadEvaluationException::BadEvaluationException(ArgCategory category, std::string value) :
+	HLSLBuilder::ArgException("")
+{
+	BuildErrorString(category, value);
+}
+
+char const* HLSLBuilder::BadEvaluationException::what() const
+{
+	return m_Exception.c_str();
+}
+
+void HLSLBuilder::BadEvaluationException::BuildErrorString(ArgCategory category, std::string value)
+{
+	const std::unordered_map<ArgCategory, std::string> categoryCast =
+	{
+		{HLSLBuilder::ArgCategory::API, "-api"},
+		{HLSLBuilder::ArgCategory::API, "--target-api"},
+		{HLSLBuilder::ArgCategory::CONFIG, "-c"},
+		{HLSLBuilder::ArgCategory::CONFIG, "--config"}
+	};
+
+	std::stringstream error;
+	error << "Invalid assignment to: ";
+	auto category_it = categoryCast.find(category);
+	if (category_it != categoryCast.end())
+		error << category_it->second;
+	error << ", the value <" << value << "> isn't allowed";
+	m_Exception = error.str();
 }

@@ -1,6 +1,4 @@
-#ifndef FILE_HANDLER_HH
-#define FILE_HANDLER_HH
-
+#pragma once
 #include "HLSLBuilder.hh"
 
 namespace HLSLBuilder
@@ -14,6 +12,3 @@ namespace HLSLBuilder
 		static bool FileExists(std::string_view path);
 	};
 }
-
-
-#endif //FILE_HANDLER_HPP
