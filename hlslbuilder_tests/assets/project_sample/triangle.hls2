@@ -1,0 +1,13 @@
+{
+  "GraphicsPipelineSources": [
+    "./test.hlsl",
+    "./texture.hlsl"
+  ],
+  "ComputePipelineSources": [],
+  "RaytracingPipelineSources": [],
+  "MeshPipelineSources": [],
+  "VulkanVersion" : "1.3",
+  "HLSLVersion":  "6.0",
+  "VertexEntry": "vs_main",
+  "PixelEntry":  "ps_main"
+}

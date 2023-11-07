@@ -25,4 +25,5 @@ void HLSLBuilder::Console::Init()
 
 void HLSLBuilder::Console::End()
 {
+	s_Logger.reset();
 }

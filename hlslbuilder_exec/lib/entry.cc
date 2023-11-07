@@ -21,33 +21,23 @@ int main(int argc, char** argv)
 		exit(2);
 	}
 
-	auto infoArgs = HLSLBuilder::ArgTree::GetInfoArgs();
+	auto infoArgs = HLSLBuilder::ArgTree::GetInfoArg();
 	auto controlArgs = HLSLBuilder::ArgTree::GetControlArgs();
-	if ((controlArgs.size() > 0) && (infoArgs.size() > 0))
-	{
-		HLSLBuilderCLI::Displayer::InfoControlError();
-		exit(1);
-	}
-	if ((infoArgs.size() > 1))
-	{
-		HLSLBuilderCLI::Displayer::MultipleInfoError();
-		exit(1);
-	}
 	
-	while (!infoArgs.empty())
+	if (!controlArgs.empty())
 	{
-		HLSLBuilderCLI::Displayer::Resolve(infoArgs.front());
-		infoArgs.pop();
-	}
-	if(!controlArgs.empty())
 		try
 		{
 			HLSLBuilder::Builder::SetControlArgs(controlArgs);
+			//HLSLBuilder::Builder
 		}
-		catch (const HLSLBuilder::MissingBuildFileException& e)
+		catch (const HLSLBuilder::BuildFileException& e)
 		{
 			HLSLBuilder::Console::Critical("{0}\n", e.what());
+			exit(1);
 		}
+	}
 
+	HLSLBuilder::Console::End();
 	return 0;
 }

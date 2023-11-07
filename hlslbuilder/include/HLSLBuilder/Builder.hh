@@ -33,20 +33,40 @@ namespace HLSLBuilder
 		}
 	};
 
-	class MissingBuildFileException : public std::exception
+	class BuildFileException : public std::exception
+	{
+	public:
+		char const* what() const override;
+	protected:
+		std::string m_Message;
+	};
+
+	class MissingBuildFileException : public BuildFileException
 	{
 	public:
 		MissingBuildFileException();
-		char const* what() const override;
-	private:
-		const std::string m_Message = "Missing build file";
 	};
+
+	class MismatchBuildFileExtensionException : public BuildFileException
+	{
+	public:
+		MismatchBuildFileExtensionException();
+	};
+
+	class BuildFileNotFoundException : public BuildFileException
+	{
+	public:
+		BuildFileNotFoundException();
+	};
+
 	class Builder
 	{
 	public:
-		static void SetControlArgs(const std::queue<std::pair<HLSLBuilder::ArgCategory, std::string>>& controlArgs);
+		static void SetControlArgs(const std::list<std::pair<HLSLBuilder::ArgCategory, std::string>>& controlArgs);
 	private:
 		static void CastMapToBuildInfos(std::unordered_map<HLSLBuilder::ArgCategory, std::string>& mappedArgs);
+		static void ValidateFileExtension(std::string_view path);
+		static void FindFile(std::string_view path);
 		static BuildInfos s_BuildInfos;
 	};
 }
