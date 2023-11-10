@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Console.hh"
-#include "ArgTree.hh"
+#include "ArgList.hh"
 #include "HLSLBuilderVersion.hh"
-#include "Builder.hh"
-#include "ProjectReader.hh"
+#include "ArgParser.hh"
+#include "SolutionParser.hh"

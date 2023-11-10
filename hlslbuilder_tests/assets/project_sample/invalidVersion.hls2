@@ -10,6 +10,6 @@
     "DomainEntry": "ds_main",
     "HullEntry":  "hs_main"
   },
-  "VulkanVersion" : "1.3",
+  "VulkanVersion": "1",
   "HLSLVersion":  "6.0"
 }

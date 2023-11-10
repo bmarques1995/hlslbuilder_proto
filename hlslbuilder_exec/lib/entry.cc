@@ -8,11 +8,11 @@ int main(int argc, char** argv)
 	HLSLBuilder::Console::Init();
 	for (size_t i = 1; i < argc; i++)
 	{
-		HLSLBuilder::ArgTree::PushRawArg(argv[i]);
+		HLSLBuilder::ArgList::PushRawArg(argv[i]);
 	}
 	try
 	{
-		HLSLBuilder::ArgTree::ResolveArgs();
+		HLSLBuilder::ArgList::ResolveArgs();
 	}
 	catch(HLSLBuilder::ArgException e)
 	{
@@ -21,23 +21,38 @@ int main(int argc, char** argv)
 		exit(2);
 	}
 
-	auto infoArgs = HLSLBuilder::ArgTree::GetInfoArg();
-	auto controlArgs = HLSLBuilder::ArgTree::GetControlArgs();
+	auto infoArg = HLSLBuilder::ArgList::GetInfoArg();
+	auto controlArgs = HLSLBuilder::ArgList::GetControlArgs();
 	
 	if (!controlArgs.empty())
 	{
 		try
 		{
-			HLSLBuilder::Builder::SetControlArgs(controlArgs);
-			//HLSLBuilder::Builder
+			HLSLBuilder::ArgParser::SetControlArgs(controlArgs);
 		}
-		catch (const HLSLBuilder::BuildFileException& e)
+		catch (const HLSLBuilder::SolutionFileException& e)
 		{
 			HLSLBuilder::Console::Critical("{0}\n", e.what());
 			exit(1);
 		}
 	}
+	else
+	{
+		HLSLBuilderCLI::Displayer::Resolve(infoArg);
+	}
 
+	HLSLBuilder::ArgList::ClearArgs();
+
+	auto parsedControlArgs = HLSLBuilder::ArgParser::GetBuildInfos();
+
+	try
+	{
+		HLSLBuilder::SolutionParser::LoadProject(parsedControlArgs.m_SolutionFilepath);
+	}
+	catch (HLSLBuilder::PropertyException& e)
+	{
+		HLSLBuilder::Console::Critical(e.what());
+	}
 	HLSLBuilder::Console::End();
 	return 0;
 }

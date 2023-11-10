@@ -111,7 +111,7 @@ namespace HLSLBuilder
 	*   * Multiple Push: if an argument is pushed more than one time, a MultipleArgPushException will be generated.
 	*   * Invalid Usage: there can be only one info arg, and if an info arg is called, there can't be control args, if this situation occurs, an InvalidUsageException is thrown.
 	*/
-	class HLSLB_API ArgTree
+	class HLSLB_API ArgList
 	{
 	public:
 		/**

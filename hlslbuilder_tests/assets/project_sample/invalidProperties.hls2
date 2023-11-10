@@ -1,4 +1,4 @@
-{
+{ 
   "GraphicsPipelineSources": [
     "./test.hlsl",
     "./texture.hlsl"
@@ -10,6 +10,5 @@
     "DomainEntry": "ds_main",
     "HullEntry":  "hs_main"
   },
-  "VulkanVersion" : "1.3",
-  "HLSLVersion":  "6.0"
+  "VulkanVersion" : "1.3"
 }

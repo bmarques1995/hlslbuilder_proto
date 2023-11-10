@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
 
 file(GLOB_RECURSE SM_HDRS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "./include/*.hh")
-file(GLOB_RECURSE SM_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} ".//*.cc")
+file(GLOB_RECURSE SM_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "./lib/*.cc")
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_PREFIX_PATH})
 
@@ -12,7 +12,7 @@ set(LIB_POSTFIX d)
 
 if(BUILD_SHARED_LIBS)
     set(LIB_NAME ${CMAKE_PROJECT_NAME}_dynamic)
-    add_library(${LIB_NAME} SHARED ${SM_HDRS} ${SM_SRCS})
+    add_library(${LIB_NAME} SHARED ${SM_HDRS} ${SM_SRCS} )
     target_precompile_headers(${LIB_NAME} PRIVATE ./include/private/smpch.hh)
     target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_PREFIX_PATH}/include" $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/HLSLBuilder> $<INSTALL_INTERFACE:${CMAKE_PREFIX_PATH}/include>)
     target_include_directories(${LIB_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/private")
@@ -42,7 +42,7 @@ if(BUILD_STATIC_LIBS OR BUILD_EXECUTABLE)
     target_include_directories(${LIB_NAME} PUBLIC "${CMAKE_PREFIX_PATH}/include" $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/HLSLBuilder> $<INSTALL_INTERFACE:${CMAKE_PREFIX_PATH}/include>)
     target_include_directories(${LIB_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/include/private")
     target_link_directories(${LIB_NAME} PUBLIC "${CMAKE_PREFIX_PATH}/lib")
-    target_link_libraries(${LIB_NAME} PUBLIC jsoncpp_static)
+    target_link_libraries(${LIB_NAME} PUBLIC jsoncpp_static spdlog::spdlog)
     target_compile_definitions(${LIB_NAME} PUBLIC SPDLOG_WCHAR_TO_UTF8_SUPPORT)
 
     if(WIN32)
