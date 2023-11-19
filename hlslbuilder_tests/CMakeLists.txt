@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_PREFIX_PATH})
 
 enable_testing()
 add_executable(${TARGET_NAME} ${SM_TESTS_SRCS})
-target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_PREFIX_PATH}/include" "${PROJECT_SOURCE_DIR}/hlslbuilder/include/HLSLBuilder")
+target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src" "${CMAKE_PREFIX_PATH}/include" "${PROJECT_SOURCE_DIR}/hlslbuilder/include")
 target_link_directories(${TARGET_NAME} PUBLIC "${CMAKE_PREFIX_PATH}/lib")
 target_link_libraries(${TARGET_NAME} PRIVATE ${CMAKE_PROJECT_NAME}_dynamic GTest::gtest_main GTest::gtest GTest::gmock_main GTest::gmock)
 add_test(

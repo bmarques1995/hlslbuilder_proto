@@ -12,5 +12,6 @@ if ($buildMode -eq "Debug" -or $buildMode -eq "Release") {
 $installPrefix = Join-Path (Get-Location) "Windows\$buildMode"
 
 Set-Location -Path "../hlslbuilder_modules"
+Start-Process vcvars64.bat
 .\build_deps $buildMode $installPrefix
 Set-Location -Path "../hlslbuilder"

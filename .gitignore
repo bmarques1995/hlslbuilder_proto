@@ -73,6 +73,7 @@ dlldata.c
 
 # Benchmark Results
 BenchmarkDotNet.Artifacts/
+launch.vs.json
 
 #version file
 hlslbuilder/include/HLSLBuilder/HLSLBuilderVersion.hh

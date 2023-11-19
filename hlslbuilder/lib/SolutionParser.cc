@@ -6,7 +6,6 @@
 #include <regex>
 
 Json::Value HLSLBuilder::SolutionParser::s_HLS2Solution;
-std::string HLSLBuilder::SolutionParser::s_RunningPath;
 const std::list<std::pair<std::string, HLSLBuilder::PropertyType>> HLSLBuilder::SolutionParser::s_ValidProperties =
 {
 	{ "GraphicsPipelineSources", HLSLBuilder::PropertyType::PATH_ARRAY },
@@ -25,8 +24,10 @@ void HLSLBuilder::SolutionParser::LoadProject(std::string_view path)
 	FileHandler::ReadTextFile(path, &json_text);
 	Json::Reader jsonReader;
 	jsonReader.parse(json_text, s_HLS2Solution);
-	std::filesystem::path absolutePath = std::filesystem::absolute(path).parent_path();
-	s_RunningPath = absolutePath.string();
+	std::string absolutePath = std::filesystem::absolute(path).parent_path().string();
+	std::replace(absolutePath.begin(), absolutePath.end(), '\\', '/');
+	s_HLS2Solution["RunningPath"] = absolutePath;
+	s_HLS2Solution["ProjectName"] = std::filesystem::absolute(path).stem().string();
 	ValidateJSONProperties();
 }
 
@@ -62,9 +63,19 @@ void HLSLBuilder::SolutionParser::ValidateName(std::string_view name)
 void HLSLBuilder::SolutionParser::ValidatePath(std::string path)
 {
 	std::regex pattern("^(\\.\\\\|\\./|\\\\|/)");
-	std::string result = std::regex_replace(path, pattern, "");
-
-	std::filesystem::path fullPath = std::filesystem::path(s_RunningPath)/ std::filesystem::path(result);
+	std::string result;
+	std::filesystem::path temp(path);
+	std::filesystem::path fullPath;
+	if (temp.is_absolute()) 
+	{
+		result = temp.string();
+		fullPath = std::filesystem::path(result);
+	}
+	else
+	{
+		result = std::regex_replace(path, pattern, "");
+		fullPath = std::filesystem::path(s_HLS2Solution["RunningPath"].asString()) / std::filesystem::path(result);
+	}
 	if(!std::filesystem::is_regular_file(fullPath))
 		throw SourceNotFoundException(fullPath.string());
 }

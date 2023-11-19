@@ -53,6 +53,18 @@ int main(int argc, char** argv)
 	{
 		HLSLBuilder::Console::Critical(e.what());
 	}
+
+	Json::Value solution = *HLSLBuilder::SolutionParser::GetSolution();
+	try
+	{
+		HLSLBuilder::Builder::SetBuildArgs(solution, parsedControlArgs.m_BuildMode, parsedControlArgs.m_OutputTarget);
+		HLSLBuilder::Builder::BuildSources();
+	}
+	catch (HLSLBuilder::CompilerException e)
+	{
+		HLSLBuilder::Console::Error(e.what());
+	}
+
 	HLSLBuilder::Console::End();
 	return 0;
 }

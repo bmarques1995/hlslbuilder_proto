@@ -89,7 +89,6 @@ namespace HLSLBuilder
 		static void ValidateName(std::string_view name);
 		static void ValidatePath(std::string path);
 		static Json::Value s_HLS2Solution;
-		static std::string s_RunningPath;
 		static const std::list<std::pair<std::string, PropertyType>> s_ValidProperties;
 	};
 }

@@ -8,7 +8,7 @@ namespace HLSLBuilder
 
 	TEST(HLSLBuilder, MissingPropertiesHLS2)
 	{
-		ArgList::PushRawArg("--build:./assets/project_sample/invalidProperties.hls2");
+		ArgList::PushRawArg("--build:./assets/test_sample/invalidProperties.hls2");
 		ArgList::PushRawArg("-api:CSO");
 		ArgList::PushRawArg("-c:Release");
 		std::string message;
@@ -25,7 +25,7 @@ namespace HLSLBuilder
 
 	TEST(HLSLBuilder, InvalidNameHLS2)
 	{
-		ArgList::PushRawArg("--build:./assets/project_sample/invalidName.hls2");
+		ArgList::PushRawArg("--build:./assets/test_sample/invalidName.hls2");
 		ArgList::PushRawArg("-api:CSO");
 		ArgList::PushRawArg("-c:Release");
 		std::string message;
@@ -42,7 +42,7 @@ namespace HLSLBuilder
 
 	TEST(HLSLBuilder, InvalidVersionHLS2)
 	{
-		ArgList::PushRawArg("--build:./assets/project_sample/invalidVersion.hls2");
+		ArgList::PushRawArg("--build:./assets/test_sample/invalidVersion.hls2");
 		ArgList::PushRawArg("-api:CSO");
 		ArgList::PushRawArg("-c:Release");
 		std::string message;
@@ -59,7 +59,7 @@ namespace HLSLBuilder
 
 	TEST(HLSLBuilder, InvalidPathHLS2)
 	{
-		ArgList::PushRawArg("--build:./assets/project_sample/invalidPath.hls2");
+		ArgList::PushRawArg("--build:./assets/test_sample/invalidPath.hls2");
 		ArgList::PushRawArg("-api:CSO");
 		ArgList::PushRawArg("-c:Release");
 		std::string message;
@@ -76,7 +76,7 @@ namespace HLSLBuilder
 
 	TEST(HLSLBuilder, ValidHLS2)
 	{
-		ArgList::PushRawArg("--build:./assets/project_sample/valid.hls2");
+		ArgList::PushRawArg("--build:./assets/test_sample/valid.hls2");
 		ArgList::PushRawArg("-api:CSO");
 		ArgList::PushRawArg("-c:Release");
 		std::string message;
